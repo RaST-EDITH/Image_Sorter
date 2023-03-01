@@ -28,6 +28,36 @@ def change( can, page) :
     can.destroy()
     page()
 
+def savingFile() :
+
+    # Saving File to a particular address
+    file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file",
+                                        defaultextension = "*.png",
+                                            filetypes = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")] )
+
+
+def removeBackground( click ) :
+
+    # Removing the background of the Images
+    click.configure( state = DISABLED)
+
+def openingFile( file_path) :
+
+    # Opening File using filedialog
+    if ( file_path.get() != "" ) :
+        file = file_path.get()
+
+    else :
+        file = filedialog.askopenfilename( initialdir = r'C:\Users\ASUS\Pictures', title = "Open file",
+                                            filetypes = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")] )
+
+    # Checking for empty address
+    if file !="" :
+        file_path.insert( 0, file )
+        # img = mpimg.imread(file)
+        # plt.title("After Removing")
+        # plt.imshow(img)
+        # plt.show()
 
 def clearBack() :
 
@@ -54,7 +84,46 @@ def clearBack() :
                                 command = lambda : change( third_page, menuPage) )
     ret_bt_win = third_page.create_window( 30, 20, anchor = "nw", window = ret_bt )
 
-    
+    # Accessing the file
+    file_path = ctk.CTkEntry( master = root, 
+                                placeholder_text = "Enter Path", text_font = ( ft[1], 20 ), 
+                                 width = 580, height = 30, corner_radius = 14,
+                                  placeholder_text_color = "#494949", text_color = "#242424", 
+                                   fg_color = "#c3c3c3", bg_color = "#d3eafc", 
+                                    border_color = "white", border_width = 3)
+    file_path_win = third_page.create_window( 125, 200, anchor = "nw", window = file_path )
+
+    # Adding file path
+    add_bt = ctk.CTkButton( master = root, 
+                             text = "Add..", text_font = ( ft[1], 20 ), 
+                              width = 60, height = 40, corner_radius = 14,
+                               bg_color = "#d3eafc", fg_color = "red", text_color = "white", 
+                                hover_color = "#ff5359", border_width = 0,
+                                 command = lambda : openingFile(file_path) )
+    add_bt_win = third_page.create_window( 860, 200-2, anchor = "nw", window = add_bt )
+
+    #Design to display 
+    img_to_rem = Imgo(r'Design\p1a.png', 370, 370)
+    third_page.create_image( 600-20, 350, image = img_to_rem , anchor = "nw")
+
+    # Background removing button
+    rem_bt = ctk.CTkButton( master = root, 
+                             text = "Remove", text_font = ( ft[0], 25 ), 
+                              width = 170, height = 50, corner_radius = 14,
+                               bg_color = "#98e2fe", fg_color = "red", text_color = "white", 
+                                hover_color = "#ff5359", border_width = 0,
+                                 command = lambda : removeBackground(rem_bt) )
+    rem_bt_win = third_page.create_window( 300, 500, anchor = "nw", window = rem_bt )
+
+    # Saving Image button
+    save_bt = ctk.CTkButton( master = root, 
+                             text = "Save Image", text_font = ( ft[0], 25 ), 
+                              width = 220, height = 50, corner_radius = 14,
+                               bg_color = "#98e2fe", fg_color = "red", text_color = "white", 
+                                hover_color = "#ff5359", border_width = 0,
+                                 command = lambda : savingFile() )
+    save_bt_win = third_page.create_window( 1000, 500, anchor = "nw", window = save_bt )
+
     root.mainloop()
 
 def convertImage() :
