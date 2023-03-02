@@ -3,10 +3,10 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 from PIL import Image ,ImageTk
+from rembg import remove
 import customtkinter as ctk
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-# from tkinter.messagebox import showerror
+import numpy as np
+from tkinter.messagebox import showerror, showinfo
 
 
 # Defining Main theme of all widgets
@@ -19,7 +19,7 @@ def Imgo( file, w, h) :
 
     # Image processing
     img = Image.open( file )
-    pht = ImageTk.PhotoImage( img.resize( (w,h), Image.ANTIALIAS))
+    pht = ImageTk.PhotoImage( img.resize( (w,h), Image.Resampling.LANCZOS))
     return pht
 
 def change( can, page) :
@@ -28,36 +28,61 @@ def change( can, page) :
     can.destroy()
     page()
 
-def savingFile() :
 
-    # Saving File to a particular address
-    file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file",
-                                        defaultextension = "*.png",
-                                            filetypes = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")] )
+def savingFile( can) :
 
+    if result.any() != 0 :
+
+        # Finding address to save file
+        file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file",
+                                            defaultextension = "*.png",
+                                                filetypes = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")] )
+
+        # Saving file
+        cv2.imwrite( file.name, result)
+        inform( "FILE SAVED" )
+        change( can, menuPage)
+
+    else :
+
+        mistake( "ENTER FILE NAME!" )
 
 def removeBackground( click ) :
 
-    # Removing the background of the Images
-    click.configure( state = DISABLED)
+    global result
+
+    # Check entry
+    if sample == "" :
+
+        mistake( "FILE NOT FOUND!")
+
+    else :
+
+        # Removing the background of the Images
+        original = cv2.imread( sample )
+        result = remove(original)
+
+        click.configure( state = DISABLED)
 
 def openingFile( file_path) :
 
+    global sample
+
     # Opening File using filedialog
     if ( file_path.get() != "" ) :
-        file = file_path.get()
+        open_file = file_path.get()
 
     else :
-        file = filedialog.askopenfilename( initialdir = r'C:\Users\ASUS\Pictures', title = "Open file",
+        open_file = filedialog.askopenfilename( initialdir = r'C:\Users\ASUS\Pictures', title = "Open file",
                                             filetypes = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")] )
 
     # Checking for empty address
-    if file !="" :
-        file_path.insert( 0, file )
-        # img = mpimg.imread(file)
-        # plt.title("After Removing")
-        # plt.imshow(img)
-        # plt.show()
+    if open_file !="" :
+        file_path.insert( 0, open_file )
+        sample = open_file
+    
+    else :
+        mistake( "FIELD EMPTY!" )
 
 def clearBack() :
 
@@ -103,7 +128,7 @@ def clearBack() :
     add_bt_win = third_page.create_window( 860, 200-2, anchor = "nw", window = add_bt )
 
     #Design to display 
-    img_to_rem = Imgo(r'Design\p1a.png', 370, 370)
+    img_to_rem = Imgo(r'Design\Clear_back_design.png', 370, 370)
     third_page.create_image( 600-20, 350, image = img_to_rem , anchor = "nw")
 
     # Background removing button
@@ -121,7 +146,7 @@ def clearBack() :
                               width = 220, height = 50, corner_radius = 14,
                                bg_color = "#98e2fe", fg_color = "red", text_color = "white", 
                                 hover_color = "#ff5359", border_width = 0,
-                                 command = lambda : savingFile() )
+                                 command = lambda : savingFile( third_page) )
     save_bt_win = third_page.create_window( 1000, 500, anchor = "nw", window = save_bt )
 
     root.mainloop()
@@ -284,7 +309,7 @@ def menuPage() :
 
 def loginPage() :
 
-    global user,pwrd,first_page
+    global user, pwrd, first_page
 
     # Defining Structure
     first_page = Canvas( root, width = wid, height = hgt, 
@@ -339,5 +364,7 @@ root.iconbitmap( r'Design\Project_Icon.ico' )
 root.geometry( "1200x700+200+80" )
 root.resizable( False, False )
 ft = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Google Sans"]
+sample = ""
+result = np.array([0,0,0])
 
 loginPage()
