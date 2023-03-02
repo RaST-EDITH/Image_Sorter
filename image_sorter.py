@@ -1,13 +1,11 @@
 import cv2
 from tkinter import *
-from tkinter import ttk
-from tkinter import filedialog
+from tkinter import ttk, filedialog
 from PIL import Image ,ImageTk
 from rembg import remove
 import customtkinter as ctk
 import numpy as np
 from tkinter.messagebox import showerror, showinfo
-
 
 # Defining Main theme of all widgets
 ctk.set_appearance_mode( "dark" )
@@ -40,7 +38,7 @@ def inform( message) :
 
 def savingFile( can) :
 
-    if result.any() != 0 :
+    if values[1].any() != 0 :
 
         # Finding address to save file
         file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file",
@@ -48,7 +46,8 @@ def savingFile( can) :
                                                 filetypes = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")] )
 
         # Saving file
-        cv2.imwrite( file.name, result)
+        cv2.imwrite( file.name, values[1])
+        values[1] = np.array([0,0,0])
         inform( "FILE SAVED" )
         change( can, menuPage)
 
@@ -58,24 +57,21 @@ def savingFile( can) :
 
 def removeBackground( click ) :
 
-    global result
-
     # Check entry
-    if sample == "" :
+    if values[0] == "" :
 
         mistake( "FILE NOT FOUND!")
 
     else :
 
         # Removing the background of the Images
-        original = cv2.imread( sample )
-        result = remove(original)
+        original = cv2.imread( values[0] )
+        values[1] = remove(original)
+        values[0] = ""
 
         click.configure( state = DISABLED)
 
 def openingFile( file_path) :
-
-    global sample
 
     # Opening File using filedialog
     if ( file_path.get() != "" ) :
@@ -88,7 +84,7 @@ def openingFile( file_path) :
     # Checking for empty address
     if open_file !="" :
         file_path.insert( 0, open_file )
-        sample = open_file
+        values[0] = open_file
     
     else :
         mistake( "FIELD EMPTY!" )
@@ -373,7 +369,6 @@ root.iconbitmap( r'Design\Project_Icon.ico' )
 root.geometry( "1200x700+200+80" )
 root.resizable( False, False )
 ft = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Google Sans"]
-sample = ""
-result = np.array([0,0,0])
+values = [ "", np.array([0,0,0])]
 
 loginPage()
