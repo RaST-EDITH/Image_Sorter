@@ -28,6 +28,15 @@ def change( can, page) :
     can.destroy()
     page()
 
+def mistake( message) :
+
+    # Pop up window
+    showerror( title = "Error Occured", message = message )
+
+def inform( message) :
+
+    # Pop up window
+    showinfo( title = "Done", message = message )
 
 def savingFile( can) :
 
