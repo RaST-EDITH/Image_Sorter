@@ -40,6 +40,56 @@ def inform( message) :
     # Pop up window
     showinfo( title = "Done", message = message )
 
+def convertFile( can, formate ) :
+
+    convert_to = formate.get()
+    file_types = { "Select Type " : False, 
+                    "   PDF" : [ "PDF file", "*.pdf"], 
+                     "   PNG" : [ "PNG file", "*.png"], 
+                      "   JPG" : [ "JPG file", "*.jpeg"] }
+    
+    convert_to = file_types[convert_to]
+
+    # Check Entry
+    if( values[0][-3:] == convert_to[1][2:] ) :
+
+        # For same file formate conversion
+        mistake("SAME FORMATE")
+
+    elif ( values[0] != "" ) and convert_to :
+
+        if ( values[0][-3:] == 'pdf' ) :
+
+            # Finding address to save file
+            dirc = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file")
+
+            poppler_path = r"C:\Users\ASUS\poppler-23.01.0\Library\bin"
+            res = convert_from_path( pdf_path = values[0], poppler_path = poppler_path )
+
+            for page in res :
+                file = datetime.now().strftime('%Y%m%d%H%M%S')
+                file = dirc + '/' + str(file) + convert_to[1][1:]
+                page.save(  Path(file), convert_to[1][2:])
+
+        else :
+
+            # Finding address to save file
+            file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file",
+                                                defaultextension = f"{convert_to[1]}",
+                                                    filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
+
+            # Saving file
+            values[1] = cv2.imread( values[0] )
+            cv2.imwrite( file.name, values[1])
+            file.close()      
+        values[0] = ""
+        values[1] = np.array([0,0,0])
+        inform( "FILE SAVED" )
+        change( can, menuPage)
+
+    else :
+
+        mistake( "ENTER FILE NAME!" )
 
 def savingFile( can) :
 
