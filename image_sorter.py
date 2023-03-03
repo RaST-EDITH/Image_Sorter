@@ -6,6 +6,10 @@ from rembg import remove
 import customtkinter as ctk
 import numpy as np
 from tkinter.messagebox import showerror, showinfo
+from pdf2image import convert_from_path
+from datetime import datetime
+from pathlib import Path
+
 
 # Defining Main theme of all widgets
 ctk.set_appearance_mode( "dark" )
@@ -36,6 +40,7 @@ def inform( message) :
     # Pop up window
     showinfo( title = "Done", message = message )
 
+
 def savingFile( can) :
 
     if values[1].any() != 0 :
@@ -49,6 +54,7 @@ def savingFile( can) :
         cv2.imwrite( file.name, values[1])
         values[1] = np.array([0,0,0])
         inform( "FILE SAVED" )
+        file.close()
         change( can, menuPage)
 
     else :
@@ -71,7 +77,7 @@ def removeBackground( click ) :
 
         click.configure( state = DISABLED)
 
-def openingFile( file_path) :
+def openingFile( file_path, file_formate ) :
 
     # Opening File using filedialog
     if ( file_path.get() != "" ) :
@@ -79,7 +85,7 @@ def openingFile( file_path) :
 
     else :
         open_file = filedialog.askopenfilename( initialdir = r'C:\Users\ASUS\Pictures', title = "Open file",
-                                            filetypes = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")] )
+                                            filetypes = file_formate )
 
     # Checking for empty address
     if open_file !="" :
@@ -116,20 +122,21 @@ def clearBack() :
 
     # Accessing the file
     file_path = ctk.CTkEntry( master = root, 
-                                placeholder_text = "Enter Path", text_font = ( ft[1], 20 ), 
+                                placeholder_text = "Enter Path", text_font = ( ft[4], 20 ), 
                                  width = 580, height = 30, corner_radius = 14,
                                   placeholder_text_color = "#494949", text_color = "#242424", 
                                    fg_color = "#c3c3c3", bg_color = "#d3eafc", 
                                     border_color = "white", border_width = 3)
     file_path_win = third_page.create_window( 125, 200, anchor = "nw", window = file_path )
 
+    file_formate = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")]
     # Adding file path
     add_bt = ctk.CTkButton( master = root, 
                              text = "Add..", text_font = ( ft[1], 20 ), 
                               width = 60, height = 40, corner_radius = 14,
                                bg_color = "#d3eafc", fg_color = "red", text_color = "white", 
                                 hover_color = "#ff5359", border_width = 0,
-                                 command = lambda : openingFile(file_path) )
+                                 command = lambda : openingFile( file_path, file_formate) )
     add_bt_win = third_page.create_window( 860, 200-2, anchor = "nw", window = add_bt )
 
     #Design to display 
@@ -138,16 +145,17 @@ def clearBack() :
 
     # Background removing button
     rem_bt = ctk.CTkButton( master = root, 
-                             text = "Remove", text_font = ( ft[0], 25 ), 
+                             text = "Remove", text_font = ( ft[4], 25 ), 
                               width = 170, height = 50, corner_radius = 14,
                                bg_color = "#98e2fe", fg_color = "red", text_color = "white", 
                                 hover_color = "#ff5359", border_width = 0,
+                                text_color_disabled = "#a4a4a4",
                                  command = lambda : removeBackground(rem_bt) )
     rem_bt_win = third_page.create_window( 300, 500, anchor = "nw", window = rem_bt )
 
     # Saving Image button
     save_bt = ctk.CTkButton( master = root, 
-                             text = "Save Image", text_font = ( ft[0], 25 ), 
+                             text = "Save Image", text_font = ( ft[4], 25 ), 
                               width = 220, height = 50, corner_radius = 14,
                                bg_color = "#98e2fe", fg_color = "red", text_color = "white", 
                                 hover_color = "#ff5359", border_width = 0,
@@ -180,6 +188,53 @@ def convertImage() :
                                 hover_color = "#ff5359", border_width = 0,
                                  command = lambda : change( fourth_page, menuPage) )
     ret_bt_win = fourth_page.create_window( 30, 20, anchor = "nw", window = ret_bt )
+
+    # Accessing the file
+    file_path = ctk.CTkEntry( master = root, 
+                                placeholder_text = "Enter Path", text_font = ( ft[4], 20 ), 
+                                 width = 580, height = 30, corner_radius = 14,
+                                  placeholder_text_color = "#494949", text_color = "#242424", 
+                                   fg_color = "#c3c3c3", bg_color = "#d3eafc", 
+                                    border_color = "white", border_width = 3)
+    file_path_win = fourth_page.create_window( 300, 210, anchor = "nw", window = file_path )
+
+    file_formate = [( "PNG file", "*.png"), ( "JPG file", "*.jpg"), ( "PDF file", "*.pdf") ]
+
+    # Adding file path
+    add_bt = ctk.CTkButton( master = root, 
+                             text = "Add..", text_font = ( ft[1], 20 ), 
+                              width = 60, height = 40, corner_radius = 14,
+                               bg_color = "#d3eafc", fg_color = "red", text_color = "white", 
+                                hover_color = "#ff5359", border_width = 0,
+                                 command = lambda : openingFile( file_path, file_formate) )
+    add_bt_win = fourth_page.create_window( 1035, 210-2, anchor = "nw", window = add_bt )
+
+    #Design to display 
+    img_to_con = Imgo(r'Design\Convert_img_design.png', 390, 390)
+    fourth_page.create_image( 600-50, 350, image = img_to_con , anchor = "nw")
+
+    # Option menu
+    opt = ctk.StringVar(value = "Select Type " )
+    com = ctk.CTkOptionMenu( master = root, variable = opt,
+                              values = [ "   PDF", "   PNG", "   JPG"],
+                               text_font = ( ft[4], 20),
+                                width = 170, height = 40, corner_radius = 15,
+                                 bg_color = "#9ae2fe", fg_color = "red", text_color = "white",
+                                  button_color = "#363fc8", button_hover_color = "#676fe8",
+                                   dropdown_color = "#ff6c3d", dropdown_hover_color = "red", 
+                                    dropdown_text_color = "white", dropdown_text_font = ( ft[4], 16),
+                                     dynamic_resizing = True )
+    # com.set("Select File")
+    com_win = fourth_page.create_window( 1000, 400, anchor = "nw", window = com )
+
+    # Saving Image button
+    save_bt = ctk.CTkButton( master = root, 
+                             text = "Save Image", text_font = ( ft[4], 22 ), 
+                              width = 200, height = 40, corner_radius = 14,
+                               bg_color = "#98e2fe", fg_color = "red", text_color = "white", 
+                                hover_color = "#ff5359", border_width = 0,
+                                 command = lambda : convertFile( fourth_page, com) )
+    save_bt_win = fourth_page.create_window( 1005, 620, anchor = "nw", window = save_bt )
 
     root.mainloop()
 
@@ -368,7 +423,7 @@ root.title( "Image Sorter" )
 root.iconbitmap( r'Design\Project_Icon.ico' )
 root.geometry( "1200x700+200+80" )
 root.resizable( False, False )
-ft = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Google Sans"]
+ft = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Microsoft Sans Serif"]
 values = [ "", np.array([0,0,0])]
 
 loginPage()
