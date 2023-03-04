@@ -9,6 +9,8 @@ from tkinter.messagebox import showerror, showinfo
 from pdf2image import convert_from_path
 from datetime import datetime
 from pathlib import Path
+from deepface import DeepFace
+import pandas as pd
 
 
 # Defining Main theme of all widgets
@@ -46,7 +48,8 @@ def convertFile( can, formate ) :
     file_types = { "Select Type " : False, 
                     "   PDF" : [ "PDF file", "*.pdf"], 
                      "   PNG" : [ "PNG file", "*.png"], 
-                      "   JPG" : [ "JPG file", "*.jpeg"] }
+                      "   JPG" : [ "JPG file", "*.jpg"],
+                       "   JPEG" : [ "JPEG file", "*.jpeg"] }
     
     convert_to = file_types[convert_to]
 
@@ -64,13 +67,26 @@ def convertFile( can, formate ) :
             dirc = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file")
 
             poppler_path = r"C:\Users\ASUS\poppler-23.01.0\Library\bin"
-            res = convert_from_path( pdf_path = values[0], poppler_path = poppler_path )
+            pages = convert_from_path( pdf_path = values[0], poppler_path = poppler_path )
 
-            for page in res :
+            for page in pages :
                 file = datetime.now().strftime('%Y%m%d%H%M%S')
                 file = dirc + '/' + str(file) + convert_to[1][1:]
                 page.save(  Path(file), convert_to[1][2:])
 
+        elif ( convert_to[1][2:] == "pdf" ) :
+
+            # Finding address to save file
+            file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file",
+                                                defaultextension = f"{convert_to[1]}",
+                                                    filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
+
+            # Saving file
+            let = Image.open( values[0] )
+            to_pdf = let.convert('RGB')
+            to_pdf.save( file.name )
+            file.close()
+        
         else :
 
             # Finding address to save file
@@ -81,7 +97,7 @@ def convertFile( can, formate ) :
             # Saving file
             values[1] = cv2.imread( values[0] )
             cv2.imwrite( file.name, values[1])
-            file.close()      
+            file.close()
         values[0] = ""
         values[1] = np.array([0,0,0])
         inform( "FILE SAVED" )
@@ -138,7 +154,7 @@ def openingFile( file_path, file_formate ) :
                                             filetypes = file_formate )
 
     # Checking for empty address
-    if open_file !="" :
+    if open_file != "" :
         file_path.insert( 0, open_file )
         values[0] = open_file
     
@@ -180,6 +196,7 @@ def clearBack() :
     file_path_win = third_page.create_window( 125, 200, anchor = "nw", window = file_path )
 
     file_formate = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")]
+
     # Adding file path
     add_bt = ctk.CTkButton( master = root, 
                              text = "Add..", text_font = ( ft[1], 20 ), 
@@ -248,7 +265,7 @@ def convertImage() :
                                     border_color = "white", border_width = 3)
     file_path_win = fourth_page.create_window( 300, 210, anchor = "nw", window = file_path )
 
-    file_formate = [( "PNG file", "*.png"), ( "JPG file", "*.jpg"), ( "PDF file", "*.pdf") ]
+    file_formate = [( "PNG file", "*.png"), ( "JPG file", "*.jpg"), ( "JPEG file", "*.jpeg"), ( "PDF file", "*.pdf") ]
 
     # Adding file path
     add_bt = ctk.CTkButton( master = root, 
@@ -266,7 +283,7 @@ def convertImage() :
     # Option menu
     opt = ctk.StringVar(value = "Select Type " )
     com = ctk.CTkOptionMenu( master = root, variable = opt,
-                              values = [ "   PDF", "   PNG", "   JPG"],
+                              values = [ "   PDF", "   PNG", "   JPG", "   JPEG"],
                                text_font = ( ft[4], 20),
                                 width = 170, height = 40, corner_radius = 15,
                                  bg_color = "#9ae2fe", fg_color = "red", text_color = "white",
@@ -474,6 +491,6 @@ root.iconbitmap( r'Design\Project_Icon.ico' )
 root.geometry( "1200x700+200+80" )
 root.resizable( False, False )
 ft = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Microsoft Sans Serif"]
-values = [ "", np.array([0,0,0])]
+values = [ "", np.array([0,0,0]), ""]
 
 loginPage()
