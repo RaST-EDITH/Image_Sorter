@@ -330,6 +330,53 @@ def findImage() :
                                  command = lambda : change( fifth_page, menuPage) )
     ret_bt_win = fifth_page.create_window( 30, 20, anchor = "nw", window = ret_bt )
 
+    # Accessing the image
+    file_path = ctk.CTkEntry( master = root, 
+                                placeholder_text = "Enter Image Path", text_font = ( ft[4], 20 ), 
+                                 width = 603, height = 30, corner_radius = 14,
+                                  placeholder_text_color = "#494949", text_color = "#242424", 
+                                   fg_color = "#c3c3c3", bg_color = "#d3eafc", 
+                                    border_color = "white", border_width = 3)
+    file_path_win = fifth_page.create_window( 300, 210, anchor = "nw", window = file_path )
+
+    file_formate = [( "PNG file", "*.png"), ( "JPG file", "*.jpg") ]
+
+    # Adding image path
+    add_bt = ctk.CTkButton( master = root, 
+                             text = "Add..", text_font = ( ft[1], 20 ), 
+                              width = 60, height = 40, corner_radius = 14,
+                               bg_color = "#d3eafc", fg_color = "red", text_color = "white", 
+                                hover_color = "#ff5359", border_width = 0,
+                                 command = lambda : openingFile( file_path, file_formate) )
+    add_bt_win = fifth_page.create_window( 1065, 210-2, anchor = "nw", window = add_bt )
+
+    # Accessing the folder
+    folder_path = ctk.CTkEntry( master = root, 
+                                 placeholder_text = "Enter Folder Path", text_font = ( ft[4], 20 ), 
+                                  width = 580, height = 30, corner_radius = 14,
+                                   placeholder_text_color = "#494949", text_color = "#242424", 
+                                    fg_color = "#c3c3c3", bg_color = "#d3eafc", 
+                                     border_color = "white", border_width = 3)
+    folder_path_win = fifth_page.create_window( 300, 295, anchor = "nw", window = folder_path )
+
+    # Browse folder button
+    browse_bt = ctk.CTkButton( master = root, 
+                                text = "Browse", text_font = ( ft[1], 20 ), 
+                                  width = 100, height = 40, corner_radius = 14,
+                                   bg_color = "#d3eafc", fg_color = "red", text_color = "white", 
+                                    hover_color = "#ff5359", border_width = 0,
+                                     command = lambda : openingFolder( folder_path ) )
+    browse_bt_win = fifth_page.create_window( 1035, 295-2, anchor = "nw", window = browse_bt )
+
+    # Image Finding button
+    find_bt = ctk.CTkButton( master = root, 
+                                text = "Find", text_font = ( ft[1], 24 ), 
+                                  width = 160, height = 45, corner_radius = 14,
+                                   bg_color = "#d3eafc", fg_color = "red", text_color = "white", 
+                                    hover_color = "#ff5359", border_width = 0,
+                                     command = lambda : findingImages() )
+    find_bt_win = fifth_page.create_window( 650, 400, anchor = "nw", window = find_bt )
+
     root.mainloop()
 
 def sortImage() :
