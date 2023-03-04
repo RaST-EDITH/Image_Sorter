@@ -143,6 +143,23 @@ def removeBackground( click ) :
 
         click.configure( state = DISABLED)
 
+def openingFolder( folder_path ) :
+
+    # Opening Folder using filedialog
+    if ( folder_path.get() != "" ) :
+        open_folder = folder_path.get()
+
+    else :
+        open_folder = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', title = "Browse Folder")
+
+    # Checking for empty address
+    if open_folder != "" :
+        folder_path.insert( 0, open_folder )
+        values[2] = open_folder
+    
+    else :
+        mistake( "FIELD EMPTY!" )
+
 def openingFile( file_path, file_formate ) :
 
     # Opening File using filedialog
