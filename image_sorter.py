@@ -1,16 +1,17 @@
+import os
 import cv2
-from tkinter import *
-from tkinter import ttk, filedialog
-from PIL import Image ,ImageTk
-from rembg import remove
-import customtkinter as ctk
 import numpy as np
-from tkinter.messagebox import showerror, showinfo
-from pdf2image import convert_from_path
-from datetime import datetime
-from pathlib import Path
-from deepface import DeepFace
 import pandas as pd
+import customtkinter as ctk
+from tkinter import *
+from rembg import remove
+from pathlib import Path
+from datetime import datetime
+from deepface import DeepFace
+from PIL import Image ,ImageTk
+from tkinter import ttk, filedialog
+from pdf2image import convert_from_path
+from tkinter.messagebox import showerror, showinfo
 
 
 # Defining Main theme of all widgets
@@ -41,6 +42,50 @@ def inform( message) :
 
     # Pop up window
     showinfo( title = "Done", message = message )
+
+def findingImages() :
+
+    # Find similar images
+    print("Nothing")
+    if ( values[0] != "" and values[2] != "" ) :
+
+        print("something")
+        lst1 = []
+        lst2 = []
+        folder_file = np.zeros(100)
+        metrics = ["cosine", "euclidean", "euclidean_l2"]
+        backends = [ 'opencv', 'ssd', 'retinaface', 'dlib', 'mtcnn', 'mediapipe']
+        values[1] = cv2.imread( values[0] )
+
+        for img in os.listdir( values[2] ) :
+
+            img2_path = values[2] + '/' + str(img)
+            values[3] = cv2.imread( img2_path )
+            # folder_file = np.append( folder_file, values[0])
+
+            # res1 = DeepFace.verify( img1_path = values[1] , img2_path = values[3], 
+            #                         enforce_detection = False, model_name = "VGG-Face",
+            #                          distance_metric = metrics[1], detector_backend = backends[2] )
+            # if res1["verified"] :
+            #     lst1.append( img )
+            
+            res2 = DeepFace.verify( img1_path = values[1] , img2_path = values[3], 
+                                    enforce_detection = False, model_name = "VGG-Face",
+                                     distance_metric = metrics[2], detector_backend = backends[1] )
+            if res2["verified"] :
+                lst2.append( img )
+            
+        print(lst1)
+        print(lst2)
+        # df = DeepFace.find( img_path = values[0], db_path = values[2], enforce_detection = False )
+        # res = pd.DataFrame( df )
+        # for i in res["identity"] :
+        #     print(i)
+    
+    values[0] = ""
+    values[1] = np.array([0,0,0])
+    values[2] = ""
+    values[3] = np.array([0,0,0])
 
 def convertFile( can, formate ) :
 
@@ -555,6 +600,6 @@ root.iconbitmap( r'Design\Project_Icon.ico' )
 root.geometry( "1200x700+200+80" )
 root.resizable( False, False )
 ft = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Microsoft Sans Serif"]
-values = [ "", np.array([0,0,0]), ""]
+values = [ "", np.array([0,0,0]), "", np.array([0,0,0])]
 
 loginPage()
