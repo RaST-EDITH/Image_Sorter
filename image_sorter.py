@@ -45,6 +45,24 @@ def inform( message) :
     # Pop up window
     showinfo( title = "Done", message = message )
 
+def analysis1( path1, path2, sample ) :
+
+    # Using type one method
+    result_1 = DeepFace.verify( img1_path = path1 , img2_path = path2,
+                                    enforce_detection = False, model_name = "VGG-Face",
+                                        distance_metric = "cosine", detector_backend = "opencv" )
+    if result_1["verified"] :
+        matches.add( sample )
+
+def analysis2( path1, path2, sample ) :
+
+    # Using type two method
+    result_2 = DeepFace.verify( img1_path = path1 , img2_path = path2,
+                                    enforce_detection = False, model_name = "VGG-Face",
+                                        distance_metric = "euclidean_l2", detector_backend = "ssd" )
+    if result_2["verified"] :
+        matches.add( sample )
+
 def findingImages( can ) :
 
     # Find similar images
