@@ -6,6 +6,7 @@ import customtkinter as ctk
 from tkinter import *
 from rembg import remove
 from pathlib import Path
+from threading import Thread
 from datetime import datetime
 from deepface import DeepFace
 from PIL import Image ,ImageTk
@@ -19,6 +20,7 @@ ctk.set_appearance_mode( "dark" )
 ctk.set_default_color_theme( "dark-blue" )
 wid = 1200
 hgt = 700
+
 
 def Imgo( file, w, h) :
 
@@ -42,50 +44,6 @@ def inform( message) :
 
     # Pop up window
     showinfo( title = "Done", message = message )
-
-def findingImages() :
-
-    # Find similar images
-    print("Nothing")
-    if ( values[0] != "" and values[2] != "" ) :
-
-        print("something")
-        lst1 = []
-        lst2 = []
-        folder_file = np.zeros(100)
-        metrics = ["cosine", "euclidean", "euclidean_l2"]
-        backends = [ 'opencv', 'ssd', 'retinaface', 'dlib', 'mtcnn', 'mediapipe']
-        values[1] = cv2.imread( values[0] )
-
-        for img in os.listdir( values[2] ) :
-
-            img2_path = values[2] + '/' + str(img)
-            values[3] = cv2.imread( img2_path )
-            # folder_file = np.append( folder_file, values[0])
-
-            # res1 = DeepFace.verify( img1_path = values[1] , img2_path = values[3], 
-            #                         enforce_detection = False, model_name = "VGG-Face",
-            #                          distance_metric = metrics[1], detector_backend = backends[2] )
-            # if res1["verified"] :
-            #     lst1.append( img )
-            
-            res2 = DeepFace.verify( img1_path = values[1] , img2_path = values[3], 
-                                    enforce_detection = False, model_name = "VGG-Face",
-                                     distance_metric = metrics[2], detector_backend = backends[1] )
-            if res2["verified"] :
-                lst2.append( img )
-            
-        print(lst1)
-        print(lst2)
-        # df = DeepFace.find( img_path = values[0], db_path = values[2], enforce_detection = False )
-        # res = pd.DataFrame( df )
-        # for i in res["identity"] :
-        #     print(i)
-    
-    values[0] = ""
-    values[1] = np.array([0,0,0])
-    values[2] = ""
-    values[3] = np.array([0,0,0])
 
 def convertFile( can, formate ) :
 
@@ -219,7 +177,7 @@ def openingFile( file_path, file_formate ) :
     if open_file != "" :
         file_path.insert( 0, open_file )
         values[0] = open_file
-    
+       
     else :
         mistake( "FIELD EMPTY!" )
 
@@ -392,6 +350,13 @@ def findImage() :
                                  command = lambda : change( fifth_page, menuPage) )
     ret_bt_win = fifth_page.create_window( 30, 20, anchor = "nw", window = ret_bt )
 
+    # Frame
+    mess = ctk.CTkFrame( master = fifth_page, 
+                          width = 780, height = 300, corner_radius = 30,
+                           bg_color = "#d5eafd", fg_color = "#97e1fe",
+                            border_color = "#4d89eb", border_width = 6)
+    mess.place_configure( x = 280, y = 480, anchor = "nw")
+
     # Accessing the image
     file_path = ctk.CTkEntry( master = root, 
                                 placeholder_text = "Enter Image Path", text_font = ( ft[4], 20 ), 
@@ -436,7 +401,7 @@ def findImage() :
                                   width = 160, height = 45, corner_radius = 14,
                                    bg_color = "#d3eafc", fg_color = "red", text_color = "white", 
                                     hover_color = "#ff5359", border_width = 0,
-                                     command = lambda : findingImages() )
+                                     command = lambda : findingImages( mess) )
     find_bt_win = fifth_page.create_window( 650, 400, anchor = "nw", window = find_bt )
 
     root.mainloop()
@@ -601,5 +566,6 @@ root.geometry( "1200x700+200+80" )
 root.resizable( False, False )
 ft = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Microsoft Sans Serif"]
 values = [ "", np.array([0,0,0]), "", np.array([0,0,0])]
+matches = set()
 
 loginPage()
