@@ -205,10 +205,15 @@ def openingFolder( folder_path ) :
         open_folder = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', title = "Browse Folder")
 
     # Checking for empty address
-    if open_folder != "" :
+    if open_folder != "" and folder_path == "" :
         folder_path.insert( 0, open_folder )
         values[2] = open_folder
     
+    elif open_folder != "" and folder_path.get() != "" :
+        folder_path.delete( 0, END)
+        folder_path.insert( 0, open_folder )
+        values[0] = open_folder
+
     else :
         mistake( "FIELD EMPTY!" )
 
@@ -223,7 +228,12 @@ def openingFile( file_path, file_formate ) :
                                             filetypes = file_formate )
 
     # Checking for empty address
-    if open_file != "" :
+    if open_file != "" and file_path == "" :
+        file_path.insert( 0, open_file )
+        values[0] = open_file
+    
+    elif open_file != "" and file_path.get() != "" :
+        file_path.delete( 0, END)
         file_path.insert( 0, open_file )
         values[0] = open_file
        
