@@ -45,6 +45,37 @@ def inform( message) :
     # Pop up window
     showinfo( title = "Done", message = message )
 
+def findingImages( can ) :
+
+    # Find similar images
+    if ( values[0] != "" and values[2] != "" ) :
+
+        values[1] = cv2.imread( values[0] )
+
+        for img in os.listdir( values[2] ) :
+
+            img2_path = values[2] + '/' + str(img)
+            values[3] = cv2.imread( img2_path )
+
+            # Both at same time
+            Thread(target = analysis1( values[1], values[3], img )).start()
+            Thread(target = analysis2( values[1], values[3], img )).start()
+            
+        print( matches )
+
+        # For searching folder, method 2
+
+        # df = DeepFace.find( img_path = values[0], db_path = values[2], enforce_detection = False )
+        # res = pd.DataFrame( df )
+        # for i in res["identity"] :
+        #     print(i)
+    
+    values[0] = ""
+    values[1] = np.array([0,0,0])
+    values[2] = ""
+    values[3] = np.array([0,0,0])
+    represent( can )
+
 def convertFile( can, formate ) :
 
     convert_to = formate.get()
