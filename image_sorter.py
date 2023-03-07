@@ -1,7 +1,6 @@
 import os
 import cv2
 import numpy as np
-import pandas as pd
 import customtkinter as ctk
 from tkinter import *
 from rembg import remove
@@ -63,7 +62,7 @@ def analysis2( path1, path2, sample ) :
     if result_2["verified"] :
         matches.add( sample )
 
-def findingImages( can ) :
+def findingImages( label ) :
 
     # Find similar images
     if ( values[0] != "" and values[2] != "" ) :
@@ -78,8 +77,6 @@ def findingImages( can ) :
             # Both at same time
             Thread(target = analysis1( values[1], values[3], img )).start()
             Thread(target = analysis2( values[1], values[3], img )).start()
-            
-        print( matches )
 
         # For searching folder, method 2
 
@@ -88,11 +85,29 @@ def findingImages( can ) :
         # for i in res["identity"] :
         #     print(i)
     
+    # Show data
+    if matches == set() :
+
+        label.configure( text = "No File Found")
+    
+    else :
+        
+        output = ""
+        x = 50
+        for i in matches :
+            if ( len(output + i) > x ) :
+                x = x + 50
+                output = output + os.linesep
+            output = str(output + i + ", ")
+        
+        label.configure( text = output[:len(output)-2], text_font = (ft[1], 20, "bold"))
+        label.place_configure( x = 50, y = 50, anchor = "nw" )
+
     values[0] = ""
     values[1] = np.array([0,0,0])
     values[2] = ""
     values[3] = np.array([0,0,0])
-    represent( can )
+    matches.clear()
 
 def convertFile( can, formate ) :
 
@@ -205,14 +220,14 @@ def openingFolder( folder_path ) :
         open_folder = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', title = "Browse Folder")
 
     # Checking for empty address
-    if open_folder != "" and folder_path == "" :
-        folder_path.insert( 0, open_folder )
+    if ( open_folder != "" ) :
+
         values[2] = open_folder
-    
-    elif open_folder != "" and folder_path.get() != "" :
-        folder_path.delete( 0, END)
+
+        if ( folder_path.get() != "" ) :
+            folder_path.delete( 0, END)
+        
         folder_path.insert( 0, open_folder )
-        values[0] = open_folder
 
     else :
         mistake( "FIELD EMPTY!" )
@@ -228,14 +243,14 @@ def openingFile( file_path, file_formate ) :
                                             filetypes = file_formate )
 
     # Checking for empty address
-    if open_file != "" and file_path == "" :
-        file_path.insert( 0, open_file )
-        values[0] = open_file
+    if ( open_file != "" ) :
     
-    elif open_file != "" and file_path.get() != "" :
-        file_path.delete( 0, END)
-        file_path.insert( 0, open_file )
         values[0] = open_file
+
+        if ( file_path.get() != "" ) :
+            file_path.delete( 0, END)
+        
+        file_path.insert( 0, open_file )
        
     else :
         mistake( "FIELD EMPTY!" )
@@ -409,13 +424,6 @@ def findImage() :
                                  command = lambda : change( fifth_page, menuPage) )
     ret_bt_win = fifth_page.create_window( 30, 20, anchor = "nw", window = ret_bt )
 
-    # Frame
-    mess = ctk.CTkFrame( master = fifth_page, 
-                          width = 780, height = 300, corner_radius = 30,
-                           bg_color = "#d5eafd", fg_color = "#97e1fe",
-                            border_color = "#4d89eb", border_width = 6)
-    mess.place_configure( x = 280, y = 480, anchor = "nw")
-
     # Accessing the image
     file_path = ctk.CTkEntry( master = root, 
                                 placeholder_text = "Enter Image Path", text_font = ( ft[4], 20 ), 
@@ -454,13 +462,27 @@ def findImage() :
                                      command = lambda : openingFolder( folder_path ) )
     browse_bt_win = fifth_page.create_window( 1035, 295-2, anchor = "nw", window = browse_bt )
 
+    # Frame
+    mess = ctk.CTkFrame( master = fifth_page, 
+                          width = 780, height = 300, corner_radius = 30,
+                           bg_color = "#d5eafd", fg_color = "#97e1fe",
+                            border_color = "#4d89eb", border_width = 6)
+    mess.place_configure( x = 280, y = 480, anchor = "nw")
+
+    # Label in frame
+    frm_label = ctk.CTkLabel( master = mess, 
+                                text = "Insert Values", text_font = (ft[0], 45, "bold"),
+                                 width = 200, height = 50, corner_radius = 15,
+                                  bg_color = "#97e1fe", fg_color = "#97e1fe", text_color = "#1c54df"  )
+    frm_label.place_configure( x = 220, y = 120, anchor = "nw" )
+
     # Image Finding button
     find_bt = ctk.CTkButton( master = root, 
                                 text = "Find", text_font = ( ft[1], 24 ), 
                                   width = 160, height = 45, corner_radius = 14,
                                    bg_color = "#d3eafc", fg_color = "red", text_color = "white", 
                                     hover_color = "#ff5359", border_width = 0,
-                                     command = lambda : findingImages( mess) )
+                                     command = lambda : findingImages( frm_label ) )
     find_bt_win = fifth_page.create_window( 650, 400, anchor = "nw", window = find_bt )
 
     root.mainloop()
@@ -624,7 +646,7 @@ root.iconbitmap( r'Design\Project_Icon.ico' )
 root.geometry( "1200x700+200+80" )
 root.resizable( False, False )
 ft = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Microsoft Sans Serif"]
-values = [ "", np.array([0,0,0]), "", np.array([0,0,0])]
+values = [ "", np.array([0,0,0]), "", np.array([0,0,0]), ""]
 matches = set()
 
 loginPage()
