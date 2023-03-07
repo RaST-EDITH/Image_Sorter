@@ -512,6 +512,42 @@ def sortImage() :
                                  command = lambda : change( sixth_page, menuPage) )
     ret_bt_win = sixth_page.create_window( 30, 20, anchor = "nw", window = ret_bt )
 
+    # Accessing the folder1
+    folder1_path = ctk.CTkEntry( master = root, 
+                                  placeholder_text = "Enter Folder 1 Path", text_font = ( ft[4], 20 ), 
+                                   width = 580, height = 30, corner_radius = 14,
+                                    placeholder_text_color = "#494949", text_color = "#242424", 
+                                     fg_color = "#c3c3c3", bg_color = "#d3eafc", 
+                                      border_color = "white", border_width = 3)
+    folder1_path_win = sixth_page.create_window( 300, 210, anchor = "nw", window = folder1_path )
+
+    # Browse folde1 button
+    browse_bt_1 = ctk.CTkButton( master = root, 
+                                  text = "Browse", text_font = ( ft[1], 20 ), 
+                                    width = 100, height = 40, corner_radius = 14,
+                                     bg_color = "#d3eafc", fg_color = "red", text_color = "white", 
+                                      hover_color = "#ff5359", border_width = 0,
+                                       command = lambda : openingFolder( folder1_path ) )
+    browse_bt_1_win = sixth_page.create_window( 1035, 210-2, anchor = "nw", window = browse_bt_1 )
+
+    # Accessing the folder2
+    folder2_path = ctk.CTkEntry( master = root, 
+                                  placeholder_text = "Enter Folder 2 Path", text_font = ( ft[4], 20 ), 
+                                   width = 580, height = 30, corner_radius = 14,
+                                    placeholder_text_color = "#494949", text_color = "#242424", 
+                                     fg_color = "#c3c3c3", bg_color = "#d3eafc", 
+                                      border_color = "white", border_width = 3)
+    folder2_path_win = sixth_page.create_window( 300, 295, anchor = "nw", window = folder2_path )
+
+    # Browse folder2 button
+    browse_bt_2 = ctk.CTkButton( master = root, 
+                                  text = "Browse", text_font = ( ft[1], 20 ), 
+                                    width = 100, height = 40, corner_radius = 14,
+                                     bg_color = "#d3eafc", fg_color = "red", text_color = "white", 
+                                      hover_color = "#ff5359", border_width = 0,
+                                       command = lambda : openingFolder2( folder2_path ) )
+    browse_bt_2_win = sixth_page.create_window( 1035, 295-2, anchor = "nw", window = browse_bt_2 )
+
     root.mainloop()
 
 def menuPage() :
