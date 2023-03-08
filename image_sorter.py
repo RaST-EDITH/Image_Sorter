@@ -185,8 +185,8 @@ def savingFile( can) :
 
         # Saving file
         cv2.imwrite( file.name, values[1])
-        values[1] = np.array([0,0,0])
         inform( "FILE SAVED" )
+        values[1] = np.array([0,0,0])
         file.close()
         change( can, menuPage)
 
@@ -223,6 +223,28 @@ def openingFolder( folder_path ) :
     if ( open_folder != "" ) :
 
         values[2] = open_folder
+
+        if ( folder_path.get() != "" ) :
+            folder_path.delete( 0, END)
+        
+        folder_path.insert( 0, open_folder )
+
+    else :
+        mistake( "FIELD EMPTY!" )
+
+def openingFolder2( folder_path ) :
+
+    # Opening Folder using filedialog
+    if ( folder_path.get() != "" ) :
+        open_folder = folder_path.get()
+
+    else :
+        open_folder = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', title = "Browse Folder")
+
+    # Checking for empty address
+    if ( open_folder != "" ) :
+
+        values[4] = open_folder
 
         if ( folder_path.get() != "" ) :
             folder_path.delete( 0, END)
