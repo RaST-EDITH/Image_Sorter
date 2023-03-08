@@ -570,6 +570,15 @@ def sortImage() :
                                        command = lambda : openingFolder2( folder2_path ) )
     browse_bt_2_win = sixth_page.create_window( 1035, 295-2, anchor = "nw", window = browse_bt_2 )
 
+    # Sorting button
+    sort_bt = ctk.CTkButton( master = root, 
+                                text = "Start Sorting", text_font = ( ft[0], 24 ), 
+                                  width = 250, height = 45, corner_radius = 14,
+                                   bg_color = "#99e2fe", fg_color = "red", text_color = "white", 
+                                    hover_color = "#ff5359", border_width = 0,
+                                     command = lambda : sortingImages() )
+    sort_bt_win = sixth_page.create_window( 610, 540, anchor = "nw", window = sort_bt )
+
     root.mainloop()
 
 def menuPage() :
