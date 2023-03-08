@@ -62,6 +62,48 @@ def analysis2( path1, path2, sample ) :
     if result_2["verified"] :
         matches.add( sample )
 
+def sortingImages() :
+
+    # Sorting Images And Saving them in folders
+
+    if ( values[2] != "" and values[4] != "" ) :
+
+        main_img = {}
+        check_img = {}
+        # main_img = np.zeros(100)
+        # check_img = np.zeros(100)
+
+        for img in os.listdir( values[2] ) :
+
+            main_path = values[2] + '/' + str(img)
+            main_img[img] = cv2.imread( main_path )
+            # main_img = np.append( main_img, cv2.imread( main_path ))
+
+        for img in os.listdir( values[4] ) :
+
+            check_path = values[4] + '/' + str(img)
+            check_img[img] = cv2.imread( check_path )
+            # check_img = np.append( check_img, cv2.imread( check_path ))
+
+        for x in main_img.keys() :
+            for y in check_img.keys() :
+
+                # Both at same time
+                Thread(target = analysis1( main_img[x], check_img[y], y )).start()
+                Thread(target = analysis2( main_img[x], check_img[y], y )).start()
+
+            new_dir = os.path.join( values[2], str( x[ : len(x)-4] + "match") )
+            os.mkdir( new_dir )
+            for i in matches :
+                cv2.imwrite( os.path.join( new_dir, i), check_img[i] )
+            matches.clear()
+
+        inform( "Sorted And Saved" )
+    
+    else :
+
+        mistake( "Empty Fields" )
+
 def findingImages( label ) :
 
     # Find similar images
