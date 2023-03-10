@@ -390,6 +390,26 @@ def openingFile( file_path, file_formate ) :
         # Showing error due to empty credientials
         mistake( "FIELD EMPTY!" )
 
+def checkLogin( can, page, user, pwrd ) :
+
+    # Checking the login credientials
+    if ( user.get() != "" and pwrd.get() != "" ) :
+
+        if ( user.get() == "JustFunfact" and pwrd.get() == "star is burning" ) :
+
+            # Login, same entry found
+            change( can, page )
+        
+        else :
+
+            # Showing error due to no match
+            mistake("ENTRY DOESN'T MATCH")
+
+    else :
+
+        # Showing error due to empty credientials
+        mistake( "EMPTY FIELDS")
+
 # Designing pages of respective functionality
 def clearBack() :
 
