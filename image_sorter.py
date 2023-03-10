@@ -1,3 +1,4 @@
+# Library and Modules used 
 import os
 import cv2
 import numpy as np
@@ -20,7 +21,7 @@ ctk.set_default_color_theme( "dark-blue" )
 wid = 1200
 hgt = 700
 
-
+# Creating functions whihch used to provide fnctionality to pages
 def Imgo( file, w, h) :
 
     # Image processing
@@ -36,56 +37,61 @@ def change( can, page) :
 
 def mistake( message) :
 
-    # Pop up window
+    # Pop up window for errors
     showerror( title = "Error Occured", message = message )
 
 def inform( message) :
 
-    # Pop up window
+    # Pop up window for info
     showinfo( title = "Done", message = message )
 
 def analysis1( path1, path2, sample ) :
 
-    # Using type one method
+    # First method for image analysis 
     result_1 = DeepFace.verify( img1_path = path1 , img2_path = path2,
                                     enforce_detection = False, model_name = "VGG-Face",
                                         distance_metric = "cosine", detector_backend = "opencv" )
+                                        
     if result_1["verified"] :
+
+        # Add image if match
         matches.add( sample )
 
 def analysis2( path1, path2, sample ) :
 
-    # Using type two method
+    # Second method for image analysis
     result_2 = DeepFace.verify( img1_path = path1 , img2_path = path2,
                                     enforce_detection = False, model_name = "VGG-Face",
                                         distance_metric = "euclidean_l2", detector_backend = "ssd" )
+
     if result_2["verified"] :
+
+        # Add image if match
         matches.add( sample )
 
 def sortingImages() :
 
-    # Sorting Images And Saving them in folders
-
+    # Sorting Images and Saving them in folders
     if ( values[2] != "" and values[4] != "" ) :
 
         main_img = {}
         check_img = {}
-        # main_img = np.zeros(100)
-        # check_img = np.zeros(100)
 
+        # Processing First folder 
         for img in os.listdir( values[2] ) :
 
             main_path = values[2] + '/' + str(img)
             main_img[img] = cv2.imread( main_path )
-            # main_img = np.append( main_img, cv2.imread( main_path ))
 
+        # Processing Second folder
         for img in os.listdir( values[4] ) :
 
             check_path = values[4] + '/' + str(img)
             check_img[img] = cv2.imread( check_path )
-            # check_img = np.append( check_img, cv2.imread( check_path ))
 
+        # Analysing both the folders together
         for x in main_img.keys() :
+
             for y in check_img.keys() :
 
                 # Both at same time
@@ -94,23 +100,34 @@ def sortingImages() :
 
             new_dir = os.path.join( values[2], str( x[ : len(x)-4] + "match") )
             os.mkdir( new_dir )
+
             for i in matches :
+
+                # Saving Images to new directory
                 cv2.imwrite( os.path.join( new_dir, i), check_img[i] )
+            
+            # Clearing the previous data from set
             matches.clear()
 
+        # Message of completion
         inform( "Sorted And Saved" )
+        values[2] = ""
+        values[4] = ""
     
     else :
 
+        # Showing error due to empty credientials
         mistake( "Empty Fields" )
 
 def findingImages( label ) :
 
-    # Find similar images
+    # Finding similar images
     if ( values[0] != "" and values[2] != "" ) :
 
+        # Processing image
         values[1] = cv2.imread( values[0] )
 
+        # Getting into images of given folder
         for img in os.listdir( values[2] ) :
 
             img2_path = values[2] + '/' + str(img)
@@ -130,21 +147,29 @@ def findingImages( label ) :
     # Show data
     if matches == set() :
 
+        # Message in the frame
         label.configure( text = "No File Found")
     
     else :
         
-        output = ""
+        # Showing results in order
         x = 50
+        output = ""
+
         for i in matches :
+            
             if ( len(output + i) > x ) :
+
                 x = x + 50
                 output = output + os.linesep
+
             output = str(output + i + ", ")
         
-        label.configure( text = output[:len(output)-2], text_font = (ft[1], 20, "bold"))
+        label.configure( text = output[:len(output)-2], 
+                            text_font = (ft[1], 20, "bold"))
         label.place_configure( x = 50, y = 50, anchor = "nw" )
 
+    # Clearing previously processed data
     values[0] = ""
     values[1] = np.array([0,0,0])
     values[2] = ""
@@ -153,6 +178,7 @@ def findingImages( label ) :
 
 def convertFile( can, formate ) :
 
+    # Coverting files to another specified formate
     convert_to = formate.get()
     file_types = { "Select Type " : False, 
                     "   PDF" : [ "PDF file", "*.pdf"], 
@@ -160,35 +186,45 @@ def convertFile( can, formate ) :
                       "   JPG" : [ "JPG file", "*.jpg"],
                        "   JPEG" : [ "JPEG file", "*.jpeg"] }
     
+    # Formate to which we have to convert
     convert_to = file_types[convert_to]
 
-    # Check Entry
+    # Checking Entrybox
     if( values[0][-3:] == convert_to[1][2:] ) :
 
-        # For same file formate conversion
+        # Error due to converting to same formate
         mistake("SAME FORMATE")
 
     elif ( values[0] != "" ) and convert_to :
 
+        # Converting pdf files
         if ( values[0][-3:] == 'pdf' ) :
 
             # Finding address to save file
-            dirc = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file")
+            dirc = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', 
+                                                title = "Save file")
 
+            # Poppler's Path
             poppler_path = r"C:\Users\ASUS\poppler-23.01.0\Library\bin"
+
+            # Processing page(s) of pdf
             pages = convert_from_path( pdf_path = values[0], poppler_path = poppler_path )
 
+            # Getting into page(s) of pdf
             for page in pages :
+                
                 file = datetime.now().strftime('%Y%m%d%H%M%S')
                 file = dirc + '/' + str(file) + convert_to[1][1:]
                 page.save(  Path(file), convert_to[1][2:])
 
+        # Converting to pdf formate
         elif ( convert_to[1][2:] == "pdf" ) :
 
             # Finding address to save file
-            file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file",
-                                                defaultextension = f"{convert_to[1]}",
-                                                    filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
+            file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', 
+                                                title = "Save file",
+                                                    defaultextension = f"{convert_to[1]}",
+                                                        filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
 
             # Saving file
             let = Image.open( values[0] )
@@ -196,70 +232,91 @@ def convertFile( can, formate ) :
             to_pdf.save( file.name )
             file.close()
         
+        # For other types of formate conversion
         else :
 
             # Finding address to save file
-            file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file",
-                                                defaultextension = f"{convert_to[1]}",
-                                                    filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
+            file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', 
+                                                title = "Save file",
+                                                    defaultextension = f"{convert_to[1]}",
+                                                        filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
 
             # Saving file
             values[1] = cv2.imread( values[0] )
             cv2.imwrite( file.name, values[1])
             file.close()
+        
+        # Clearing previously processed data
         values[0] = ""
         values[1] = np.array([0,0,0])
+
+        # Message of complition and return back
         inform( "FILE SAVED" )
         change( can, menuPage)
 
     else :
 
-        mistake( "ENTER FILE NAME!" )
-
-def savingFile( can) :
-
-    if values[1].any() != 0 :
-
-        # Finding address to save file
-        file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', title = "Save file",
-                                            defaultextension = "*.png",
-                                                filetypes = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")] )
-
-        # Saving file
-        cv2.imwrite( file.name, values[1])
-        inform( "FILE SAVED" )
-        values[1] = np.array([0,0,0])
-        file.close()
-        change( can, menuPage)
-
-    else :
-
+        # Showing error due empty credientials
         mistake( "ENTER FILE NAME!" )
 
 def removeBackground( click ) :
 
-    # Check entry
+    # Removing the background of given Image
+    
+    # Checking entry
     if values[0] == "" :
 
+        # Showing error due to empty credientials
         mistake( "FILE NOT FOUND!")
 
     else :
 
-        # Removing the background of the Images
+        # Removing the background of the Image
         original = cv2.imread( values[0] )
         values[1] = remove(original)
         values[0] = ""
 
+        # Disabling the button after removing 
         click.configure( state = DISABLED)
+
+def savingFile( can ) :
+
+    # Saving the file to a particular address
+    if values[1].any() != 0 :
+
+        # Finding address to save file
+        file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', 
+                                            title = "Save file",
+                                                defaultextension = "*.png",
+                                                    filetypes = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")] )
+
+        # Saving file
+        cv2.imwrite( file.name, values[1])
+        values[1] = np.array([0,0,0])
+        file.close()
+
+        # Showing message of complition and returning back
+        inform( "FILE SAVED" )
+        change( can, menuPage)
+
+    else :
+
+        # Showing error due to empty credientials
+        mistake( "ENTER FILE NAME!" )
 
 def openingFolder( folder_path ) :
 
     # Opening Folder using filedialog
     if ( folder_path.get() != "" ) :
+
+        # Getting path of folder from entry box
         open_folder = folder_path.get()
 
     else :
-        open_folder = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', title = "Browse Folder")
+
+        # Getting path of folder from dialog
+        open_folder = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', 
+                                                title = "Browse Folder")
 
     # Checking for empty address
     if ( open_folder != "" ) :
@@ -272,15 +329,21 @@ def openingFolder( folder_path ) :
         folder_path.insert( 0, open_folder )
 
     else :
+
+        # Showing error due to empty credientials
         mistake( "FIELD EMPTY!" )
 
 def openingFolder2( folder_path ) :
 
     # Opening Folder using filedialog
     if ( folder_path.get() != "" ) :
+
+        # Getting path of folder from entry box
         open_folder = folder_path.get()
 
     else :
+
+        # Getting path of folder from dialog
         open_folder = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', title = "Browse Folder")
 
     # Checking for empty address
@@ -294,15 +357,21 @@ def openingFolder2( folder_path ) :
         folder_path.insert( 0, open_folder )
 
     else :
+
+        # Showing error due to empty credientials
         mistake( "FIELD EMPTY!" )
 
 def openingFile( file_path, file_formate ) :
 
-    # Opening File using filedialog
+    # Opening File
     if ( file_path.get() != "" ) :
+
+        # Getting path of file from entry box
         open_file = file_path.get()
 
     else :
+
+        # Getting path of file from filedialog
         open_file = filedialog.askopenfilename( initialdir = r'C:\Users\ASUS\Pictures', title = "Open file",
                                             filetypes = file_formate )
 
@@ -317,14 +386,20 @@ def openingFile( file_path, file_formate ) :
         file_path.insert( 0, open_file )
        
     else :
+
+        # Showing error due to empty credientials
         mistake( "FIELD EMPTY!" )
 
+# Designing pages of respective functionality
 def clearBack() :
 
-     # Defining Structure
-    third_page = Canvas( root, width = wid, height = hgt, 
-                          bg = "black", highlightcolor = "#3c5390", 
-                           borderwidth = 0 )
+    # Image Background removing 
+
+    # Defining Structure
+    third_page = Canvas( root, 
+                          width = wid, height = hgt, 
+                           bg = "black", highlightcolor = "#3c5390", 
+                            borderwidth = 0 )
     third_page.pack( fill = "both", expand = True )
 
     # Background Image
@@ -392,7 +467,8 @@ def clearBack() :
 def convertImage() :
 
      # Defining Structure
-    fourth_page = Canvas( root, width = wid, height = hgt, 
+    fourth_page = Canvas( root, 
+                           width = wid, height = hgt, 
                             bg = "black", highlightcolor = "#3c5390", 
                              borderwidth = 0 )
     fourth_page.pack( fill = "both", expand = True )
@@ -402,7 +478,8 @@ def convertImage() :
     fourth_page.create_image( 0, 0, image = back_image , anchor = "nw")
 
     # Heading
-    fourth_page.create_text( 500, 120, text = "Convert Images", font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
+    fourth_page.create_text( 500, 120, text = "Convert Images", 
+                                font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
 
     # Return Button
     ret = Imgo( r'Design\arrow.png', 45, 35)
@@ -466,9 +543,10 @@ def convertImage() :
 def findImage() :
 
      # Defining Structure
-    fifth_page = Canvas( root, width = wid, height = hgt, 
-                          bg = "black", highlightcolor = "#3c5390", 
-                           borderwidth = 0 )
+    fifth_page = Canvas( root, width = 
+                          wid, height = hgt, 
+                           bg = "black", highlightcolor = "#3c5390", 
+                            borderwidth = 0 )
     fifth_page.pack( fill = "both", expand = True )
 
     # Background Image
@@ -554,9 +632,10 @@ def findImage() :
 def sortImage() :
 
      # Defining Structure
-    sixth_page = Canvas( root, width = wid, height = hgt, 
-                          bg = "black", highlightcolor = "#3c5390", 
-                           borderwidth = 0 )
+    sixth_page = Canvas( root, 
+                          width = wid, height = hgt, 
+                           bg = "black", highlightcolor = "#3c5390", 
+                            borderwidth = 0 )
     sixth_page.pack( fill = "both", expand = True )
 
     # Background Image
@@ -564,7 +643,8 @@ def sortImage() :
     sixth_page.create_image( 0, 0, image = back_image , anchor = "nw")
 
     # Heading
-    sixth_page.create_text( 400, 120, text = "Sort Images", font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
+    sixth_page.create_text( 400, 120, text = "Sort Images", 
+                                font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
 
     # Return Button
     ret = Imgo( r'Design\arrow.png', 45, 35)
@@ -626,7 +706,8 @@ def sortImage() :
 def menuPage() :
 
     # Defining Structure
-    second_page = Canvas( root, width = wid, height = hgt, 
+    second_page = Canvas( root, 
+                           width = wid, height = hgt, 
                             bg = "black", highlightcolor = "#3c5390", 
                              borderwidth = 0 )
     second_page.pack( fill = "both", expand = True )
@@ -636,7 +717,8 @@ def menuPage() :
     second_page.create_image( 0, 0, image = back_image , anchor = "nw")
 
     # Heading
-    second_page.create_text( 350, 120, text = "Content...", font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
+    second_page.create_text( 350, 120, text = "Content...", 
+                                font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
 
     # Back Ground remover page window
     backRem = Imgo( r'Design\Clear_Back_logo.png', 220, 200 )
@@ -703,9 +785,10 @@ def loginPage() :
     global user, pwrd, first_page
 
     # Defining Structure
-    first_page = Canvas( root, width = wid, height = hgt, 
-                          bg = "black", highlightcolor = "#3c5390", 
-                           borderwidth = 0 )
+    first_page = Canvas( root, 
+                          width = wid, height = hgt, 
+                           bg = "black", highlightcolor = "#3c5390", 
+                            borderwidth = 0 )
     first_page.pack( fill = "both", expand = True )
 
     # Background Image
@@ -715,8 +798,10 @@ def loginPage() :
     first_page.create_image( 350, 325, image = design_image, anchor = "nw")
 
     # Heading
-    first_page.create_text( 450, 150, text = "Image Sorter", font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
-    first_page.create_text( 1150, 380, text = "Welcome\n    Back", font = ( ft[0], 26, "bold" ), fill = "#0b4bf5" )
+    first_page.create_text( 450, 150, text = "Image Sorter", 
+                                font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
+    first_page.create_text( 1150, 380, text = "Welcome\n    Back", 
+                                font = ( ft[0], 26, "bold" ), fill = "#0b4bf5" )
 
     # Entry of username and password
     user = ctk.CTkEntry( master = root, 
@@ -742,7 +827,7 @@ def loginPage() :
                                width = 50, height = 25, corner_radius = 15, 
                                 bg_color = "#9ae2fe", fg_color = "red", 
                                  hover_color = "#ff5359", border_width = 0, 
-                                  command = lambda : change( first_page, menuPage))
+                                  command = lambda : checkLogin( first_page, menuPage, user, pwrd ))
     log_bt_win = first_page.create_window( 1090, 650, anchor = "nw", window = log_bt )
 
     root.mainloop()
