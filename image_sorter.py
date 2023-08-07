@@ -201,8 +201,7 @@ def convertFile( can, formate ) :
         if ( values[0][-3:] == 'pdf' ) :
 
             # Finding address to save file
-            dirc = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', 
-                                                title = "Save file")
+            dirc = filedialog.askdirectory( initialdir = os.getcwd(), title = "Save file")
 
             # Poppler's Path
             poppler_path = r"C:\Users\ASUS\poppler-23.01.0\Library\bin"
@@ -221,7 +220,7 @@ def convertFile( can, formate ) :
         elif ( convert_to[1][2:] == "pdf" ) :
 
             # Finding address to save file
-            file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', 
+            file = filedialog.asksaveasfile( initialdir = os.getcwd(), 
                                                 title = "Save file",
                                                     defaultextension = f"{convert_to[1]}",
                                                         filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
@@ -236,10 +235,9 @@ def convertFile( can, formate ) :
         else :
 
             # Finding address to save file
-            file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', 
-                                                title = "Save file",
-                                                    defaultextension = f"{convert_to[1]}",
-                                                        filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
+            file = filedialog.asksaveasfile( initialdir = os.getcwd(), title = "Save file",
+                                                defaultextension = f"{convert_to[1]}",
+                                                    filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
 
             # Saving file
             values[1] = cv2.imread( values[0] )
@@ -285,10 +283,9 @@ def savingFile( can ) :
     if values[1].any() != 0 :
 
         # Finding address to save file
-        file = filedialog.asksaveasfile( initialdir = r'C:\Users\ASUS\Pictures', 
-                                            title = "Save file",
-                                                defaultextension = "*.png",
-                                                    filetypes = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")] )
+        file = filedialog.asksaveasfile( initialdir = os.getcwd(), title = "Save file",
+                                            defaultextension = "*.png",
+                                                filetypes = [( "PNG file", "*.png"), ( "JPG file", "*.jpg")] )
 
         # Saving file
         cv2.imwrite( file.name, values[1])
@@ -315,8 +312,7 @@ def openingFolder( folder_path ) :
     else :
 
         # Getting path of folder from dialog
-        open_folder = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', 
-                                                title = "Browse Folder")
+        open_folder = filedialog.askdirectory( initialdir = os.getcwd() ,title = "Browse Folder")
 
     # Checking for empty address
     if ( open_folder != "" ) :
@@ -344,7 +340,7 @@ def openingFolder2( folder_path ) :
     else :
 
         # Getting path of folder from dialog
-        open_folder = filedialog.askdirectory( initialdir = r'C:\Users\ASUS\Pictures', title = "Browse Folder")
+        open_folder = filedialog.askdirectory( initialdir = os.getcwd(), title = "Browse Folder")
 
     # Checking for empty address
     if ( open_folder != "" ) :
@@ -372,8 +368,7 @@ def openingFile( file_path, file_formate ) :
     else :
 
         # Getting path of file from filedialog
-        open_file = filedialog.askopenfilename( initialdir = r'C:\Users\ASUS\Pictures', title = "Open file",
-                                            filetypes = file_formate )
+        open_file = filedialog.askopenfilename( initialdir = os.getcwd(), title = "Open file", filetypes = file_formate )
 
     # Checking for empty address
     if ( open_file != "" ) :
@@ -423,7 +418,7 @@ def clearBack() :
     third_page.pack( fill = "both", expand = True )
 
     # Background Image
-    back_image = Imgo( r'Background\Clear_Back_Page.jpg', 1498, 875)
+    back_image = Imgo( os.path.join( os.getcwd(), "Background\Clear_Back_Page.jpg" ), 1498, 875)
     third_page.create_image( 0, 0, image = back_image , anchor = "nw")
 
     # Heading
@@ -431,7 +426,7 @@ def clearBack() :
                              font = ( ft[0], 45, "bold"), fill = "#1c54df" )
 
     # Return Button
-    ret = Imgo( r'Design\arrow.png', 45, 35)
+    ret = Imgo( os.path.join( os.getcwd(), r'Design\arrow.png' ), 45, 35)
     ret_bt = ctk.CTkButton( master = root, image = ret, text = None, 
                              width = 60, height = 40, corner_radius = 23,
                               bg_color = "#d3eafc", fg_color = "red", 
@@ -460,7 +455,7 @@ def clearBack() :
     add_bt_win = third_page.create_window( 860, 200-2, anchor = "nw", window = add_bt )
 
     #Design to display 
-    img_to_rem = Imgo(r'Design\Clear_back_design.png', 370, 370)
+    img_to_rem = Imgo( os.path.join( os.getcwd(), 'Design\Clear_back_design.png' ), 370, 370)
     third_page.create_image( 600-20, 350, image = img_to_rem , anchor = "nw")
 
     # Background removing button
@@ -494,7 +489,7 @@ def convertImage() :
     fourth_page.pack( fill = "both", expand = True )
 
     # Background Image
-    back_image = Imgo( r'Background\Convert_Img_Page.jpg', 1498, 875)
+    back_image = Imgo( os.path.join( os.getcwd(), "Background\Convert_Img_Page.jpg" ), 1498, 875)
     fourth_page.create_image( 0, 0, image = back_image , anchor = "nw")
 
     # Heading
@@ -502,7 +497,7 @@ def convertImage() :
                                 font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
 
     # Return Button
-    ret = Imgo( r'Design\arrow.png', 45, 35)
+    ret = Imgo( os.path.join( os.getcwd(), r'Design\arrow.png' ), 45, 35)
     ret_bt = ctk.CTkButton( master = root, 
                              image = ret, text = None, 
                               width = 60, height = 40, corner_radius = 23,
@@ -532,7 +527,7 @@ def convertImage() :
     add_bt_win = fourth_page.create_window( 1035, 210-2, anchor = "nw", window = add_bt )
 
     #Design to display 
-    img_to_con = Imgo(r'Design\Convert_img_design.png', 390, 390)
+    img_to_con = Imgo( os.path.join( os.getcwd(), "Design\Convert_img_design.png" ), 390, 390)
     fourth_page.create_image( 600-50, 350, image = img_to_con , anchor = "nw")
 
     # Option menu
@@ -570,14 +565,14 @@ def findImage() :
     fifth_page.pack( fill = "both", expand = True )
 
     # Background Image
-    back_image = Imgo( r'Background\Find_Img_Page.jpg', 1498, 875)
+    back_image = Imgo( os.path.join( os.getcwd(), "Background\Find_Img_Page.jpg" ), 1498, 875)
     fifth_page.create_image( 0, 0, image = back_image , anchor = "nw")
 
     # Heading
     fifth_page.create_text( 400, 120, text = "Find Image", font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
 
     # Return Button
-    ret = Imgo( r'Design\arrow.png', 45, 35 )
+    ret = Imgo( os.path.join( os.getcwd(), r'Design\arrow.png' ), 45, 35 )
     ret_bt = ctk.CTkButton( master = root, 
                              image = ret, text = None, 
                               width = 60, height = 40, corner_radius = 23,
@@ -659,7 +654,7 @@ def sortImage() :
     sixth_page.pack( fill = "both", expand = True )
 
     # Background Image
-    back_image = Imgo( r'Background\Sort_Image_Page.jpg', 1498, 875)
+    back_image = Imgo( os.path.join( os.getcwd(), "Background\Sort_Image_Page.jpg" ), 1498, 875)
     sixth_page.create_image( 0, 0, image = back_image , anchor = "nw")
 
     # Heading
@@ -667,7 +662,7 @@ def sortImage() :
                                 font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
 
     # Return Button
-    ret = Imgo( r'Design\arrow.png', 45, 35)
+    ret = Imgo( os.path.join( os.getcwd(), r'Design\arrow.png' ), 45, 35)
     ret_bt = ctk.CTkButton( master = root, 
                              image = ret, text = None, 
                               width = 60, height = 40, corner_radius = 23,
@@ -733,7 +728,7 @@ def menuPage() :
     second_page.pack( fill = "both", expand = True )
 
     # Background Image
-    back_image = Imgo( r'Background\Menu_Page.jpg', 1498, 875)
+    back_image = Imgo( os.path.join( os.getcwd(), "Background\Menu_Page.jpg" ), 1498, 875)
     second_page.create_image( 0, 0, image = back_image , anchor = "nw")
 
     # Heading
@@ -741,7 +736,7 @@ def menuPage() :
                                 font = ( ft[0], 45, "bold" ), fill = "#1c54df" )
 
     # Back Ground remover page window
-    backRem = Imgo( r'Design\Clear_Back_logo.png', 220, 200 )
+    backRem = Imgo( os.path.join( os.getcwd(), "Design\Clear_Back_logo.png" ), 220, 200 )
     backRem_bt = ctk.CTkButton( master = root, 
                                  image = backRem, compound = "top", 
                                   text = "Clear Back", text_font = ( ft[0], 22, "bold" ), 
@@ -753,7 +748,7 @@ def menuPage() :
     backRem_bt_win = second_page.create_window( 190, 250, anchor = "nw", window = backRem_bt)
 
     # Image converter page window
-    imgConvert = Imgo( r'Design\Convert_Img_logo.png', 220, 200 )
+    imgConvert = Imgo( os.path.join( os.getcwd(), "Design\Convert_Img_logo.png" ), 220, 200 )
     imgConvert_bt = ctk.CTkButton( master = root, 
                                     image = imgConvert, compound = "top",
                                      text = "Converter", text_font = ( ft[0], 22, "bold" ),
@@ -765,7 +760,7 @@ def menuPage() :
     imgConvert_bt_win = second_page.create_window( 500, 400, anchor = "nw", window = imgConvert_bt )
 
     # Search image page window
-    findImg = Imgo( r'Design\Find_Img_logo.png', 220, 200 )
+    findImg = Imgo( os.path.join( os.getcwd(), "Design\Find_Img_logo.png" ), 220, 200 )
     findImg_bt = ctk.CTkButton( master = root, 
                                  image = findImg, compound = "top", 
                                   text = "Find Image", text_font = ( ft[0], 22, "bold" ),
@@ -777,7 +772,7 @@ def menuPage() :
     findImg_bt_win = second_page.create_window( 810, 250, anchor = "nw", window = findImg_bt )
 
     # Sort image page window
-    imgSort =Imgo( r'Design\Sort_Img_logo.png', 220, 200 )
+    imgSort =Imgo( os.path.join( os.getcwd(), "Design\Sort_Img_logo.png" ), 220, 200 )
     imgSort_bt = ctk.CTkButton( master = root, 
                                  image = imgSort, compound = "top", 
                                   text = "Sort Images", text_font = ( ft[0], 22, "bold" ), 
@@ -789,7 +784,7 @@ def menuPage() :
     imgSort_bt_win = second_page.create_window( 1120, 400, anchor = "nw", window = imgSort_bt )
 
     # Logout button
-    log = Imgo( r'Design\logout.png', 35, 35 )
+    log = Imgo( os.path.join( os.getcwd(), "Design\logout.png" ), 35, 35 )
     log_bt = ctk.CTkButton( master = root, 
                              image = log, text = None, 
                               width = 45, height = 45, corner_radius = 23, 
@@ -812,8 +807,8 @@ def loginPage() :
     first_page.pack( fill = "both", expand = True )
 
     # Background Image
-    back_image = Imgo( r'Background\Login_Page.jpg', 1498, 875)
-    design_image = Imgo( r'Design\Login_Design.png', 600, 400)
+    back_image = Imgo( os.path.join( os.getcwd(), "Background\Login_Page.jpg" ), 1498, 875)
+    design_image = Imgo( os.path.join( os.getcwd(), "Design\Login_Design.png" ), 600, 400)
     first_page.create_image( 0, 0, image = back_image , anchor = "nw")
     first_page.create_image( 350, 325, image = design_image, anchor = "nw")
 
@@ -856,7 +851,7 @@ global root
 
 root = ctk.CTk()
 root.title( "Image Sorter" )
-root.iconbitmap( r'Design\Project_Icon.ico' )
+root.iconbitmap( os.path.join( os.getcwd(), "Design\Project_Icon.ico" ))
 root.geometry( "1200x700+200+80" )
 root.resizable( False, False )
 ft = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Microsoft Sans Serif"]
