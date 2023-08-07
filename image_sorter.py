@@ -14,13 +14,6 @@ from tkinter import ttk, filedialog
 from pdf2image import convert_from_path
 from tkinter.messagebox import showerror, showinfo
 
-
-# Defining Main theme of all widgets
-ctk.set_appearance_mode( "dark" )
-ctk.set_default_color_theme( "dark-blue" )
-wid = 1200
-hgt = 700
-
 # Creating functions whihch used to provide fnctionality to pages
 def Imgo( file, w, h) :
 
@@ -204,7 +197,7 @@ def convertFile( can, formate ) :
             dirc = filedialog.askdirectory( initialdir = os.getcwd(), title = "Save file")
 
             # Poppler's Path
-            poppler_path = r"C:\Users\ASUS\poppler-23.01.0\Library\bin"
+            poppler_path = os.path.join( os.getcwd(), r"poppler-23.01.0\Library\bin")
 
             # Processing page(s) of pdf
             pages = convert_from_path( pdf_path = values[0], poppler_path = poppler_path )
@@ -847,15 +840,23 @@ def loginPage() :
 
     root.mainloop()
 
-global root
+if __name__  == "__main__" :
 
-root = ctk.CTk()
-root.title( "Image Sorter" )
-root.iconbitmap( os.path.join( os.getcwd(), "Design\Project_Icon.ico" ))
-root.geometry( "1200x700+200+80" )
-root.resizable( False, False )
-ft = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Microsoft Sans Serif"]
-values = [ "", np.array([0,0,0]), "", np.array([0,0,0]), ""]
-matches = set()
+    # Defining Main theme of all widgets
+    ctk.set_appearance_mode( "dark" )
+    ctk.set_default_color_theme( "dark-blue" )
+    wid = 1200
+    hgt = 700
 
-loginPage()
+    global root
+
+    root = ctk.CTk()
+    root.title( "Image Sorter" )
+    root.iconbitmap( os.path.join( os.getcwd(), "Design\Project_Icon.ico" ))
+    root.geometry( "1200x700+200+80" )
+    root.resizable( False, False )
+    ft = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Microsoft Sans Serif"]
+    values = [ "", np.array([0,0,0]), "", np.array([0,0,0]), ""]
+    matches = set()
+
+    loginPage()
