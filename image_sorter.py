@@ -171,8 +171,16 @@ def findingImages( label ) :
 
 def convertFile( can, formate ) :
 
+    if ( values[0] == "" ) :
+        mistake("Add or Enter File Path")
+        return
+    
     # Coverting files to another specified formate
     convert_to = formate.get()
+    if (convert_to == "Select Type ") :
+        mistake("Select File Format")
+        return
+
     file_types = { "Select Type " : False, 
                     "   PDF" : [ "PDF file", "*.pdf"], 
                      "   PNG" : [ "PNG file", "*.png"], 
@@ -182,73 +190,77 @@ def convertFile( can, formate ) :
     # Formate to which we have to convert
     convert_to = file_types[convert_to]
 
-    # Checking Entrybox
-    if( values[0][-3:] == convert_to[1][2:] ) :
+    try :
+        # Checking Entrybox
+        if( values[0][-3:] == convert_to[1][2:] ) :
 
-        # Error due to converting to same formate
-        mistake("SAME FORMATE")
+            # Error due to converting to same formate
+            mistake("SAME FORMATE")
 
-    elif ( values[0] != "" ) and convert_to :
+        elif ( values[0] != "" ) and convert_to :
 
-        # Converting pdf files
-        if ( values[0][-3:] == 'pdf' ) :
+            # Converting pdf files
+            if ( values[0][-3:] == 'pdf' ) :
 
-            # Finding address to save file
-            dirc = filedialog.askdirectory( initialdir = os.getcwd(), title = "Save file")
+                # Finding address to save file
+                dirc = filedialog.askdirectory( initialdir = os.getcwd(), title = "Save file")
 
-            # Poppler's Path
-            poppler_path = os.path.join( os.getcwd(), r"poppler-23.01.0\Library\bin")
+                # Poppler's Path
+                poppler_path = os.path.join( os.getcwd(), r"poppler-23.01.0\Library\bin")
 
-            # Processing page(s) of pdf
-            pages = convert_from_path( pdf_path = values[0], poppler_path = poppler_path )
+                # Processing page(s) of pdf
+                pages = convert_from_path( pdf_path = values[0], poppler_path = poppler_path )
 
-            # Getting into page(s) of pdf
-            for page in pages :
-                
-                file = datetime.now().strftime('%Y%m%d%H%M%S')
-                file = dirc + '/' + str(file) + convert_to[1][1:]
-                page.save(  Path(file), convert_to[1][2:])
+                # Getting into page(s) of pdf
+                for page in pages :
+                    
+                    file = datetime.now().strftime('%Y%m%d%H%M%S')
+                    file = dirc + '/' + str(file) + convert_to[1][1:]
+                    page.save(  Path(file), convert_to[1][2:])
 
-        # Converting to pdf formate
-        elif ( convert_to[1][2:] == "pdf" ) :
+            # Converting to pdf formate
+            elif ( convert_to[1][2:] == "pdf" ) :
 
-            # Finding address to save file
-            file = filedialog.asksaveasfile( initialdir = os.getcwd(), 
-                                                title = "Save file",
+                # Finding address to save file
+                file = filedialog.asksaveasfile( initialdir = os.getcwd(), 
+                                                    title = "Save file",
+                                                        defaultextension = f"{convert_to[1]}",
+                                                            filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
+
+                # Saving file
+                let = Image.open( values[0] )
+                to_pdf = let.convert('RGB')
+                to_pdf.save( file.name )
+                file.close()
+            
+            # For other types of formate conversion
+            else :
+
+                # Finding address to save file
+                file = filedialog.asksaveasfile( initialdir = os.getcwd(), title = "Save file",
                                                     defaultextension = f"{convert_to[1]}",
                                                         filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
 
-            # Saving file
-            let = Image.open( values[0] )
-            to_pdf = let.convert('RGB')
-            to_pdf.save( file.name )
-            file.close()
-        
-        # For other types of formate conversion
+                # Saving file
+                values[1] = cv2.imread( values[0] )
+                cv2.imwrite( file.name, values[1])
+                file.close()
+            
+            # Clearing previously processed data
+            values[0] = ""
+            values[1] = np.array([0,0,0])
+
+            # Message of complition and return back
+            inform( "FILE SAVED" )
+            change( can, menuPage)
+
         else :
 
-            # Finding address to save file
-            file = filedialog.asksaveasfile( initialdir = os.getcwd(), title = "Save file",
-                                                defaultextension = f"{convert_to[1]}",
-                                                    filetypes =[( convert_to[0], f"{convert_to[1]}" )] )
-
-            # Saving file
-            values[1] = cv2.imread( values[0] )
-            cv2.imwrite( file.name, values[1])
-            file.close()
-        
-        # Clearing previously processed data
-        values[0] = ""
-        values[1] = np.array([0,0,0])
-
-        # Message of complition and return back
-        inform( "FILE SAVED" )
-        change( can, menuPage)
-
-    else :
-
-        # Showing error due empty credientials
-        mistake( "ENTER FILE NAME!" )
+            # Showing error due empty credientials
+            mistake( "ENTER FILE NAME!" )
+    
+    except :
+        mistake("Invalid Entry")
 
 def removeBackground( click ) :
 
