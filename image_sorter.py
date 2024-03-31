@@ -486,7 +486,7 @@ def clearBack() :
 
 def convertImage() :
 
-     # Defining Structure
+    # Defining Structure
     fourth_page = Canvas( root, 
                            width = wid, height = hgt, 
                             bg = "black", highlightcolor = "#3c5390", 
